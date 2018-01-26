@@ -12,7 +12,17 @@ app.set("view engine", "ejs");
 
 mongoose.Promise = global.Promise;
 
-mongoose.connect('mongodb://localhost/tinyurl');
+// Local DB
+// mongoose.connect('mongodb://localhost/tinyurl');
+
+// MongoLab
+const dbs = require("./config/db.js");
+
+var url = process.env.MONGOLAB_URI;
+
+// mongoose.connect(dbs.url);
+
+mongoose.connect(url);
 
 app.get("/", (req, res) => {
   res.render("index.html.ejs");
