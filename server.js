@@ -14,13 +14,11 @@ mongoose.Promise = global.Promise;
 
 // Local DB
 // mongoose.connect('mongodb://localhost/tinyurl');
+// const dbs = require("./config/db.js");
+// mongoose.connect(dbs.url);
 
 // MongoLab
-const dbs = require("./config/db.js");
-
 var url = process.env.MONGOLAB_URI;
-
-// mongoose.connect(dbs.url);
 
 mongoose.connect(url);
 
@@ -31,16 +29,15 @@ app.get("/", (req, res) => {
 app.route("/new/*")
 
   .get((req, res) => {
-    console.log(req.params.link);
     const shortId = shortid.generate();
-    const tinyUrl = "http://localhost:3000/"+shortId;
+    const tinyUrl = req.get('host') + "/" + shortId;
     const originalUrl = req.params[0];
     console.log("original URL: ", originalUrl);
+    
     TinyUrl.findOne({originalUrl: originalUrl}, (err, url) => {
       if (url) {
-        alert("URL already exist: " + url.shortId);
-        res.redirect("/" + url.shortId);
-
+        console.log(url);
+        res.json(url);
       } else {
         let json = {  
           "originalUrl": originalUrl, 
@@ -76,6 +73,8 @@ app.get("/:link", (req, res) => {
   });
 });
 
-app.listen(3000, () => {
+const port = process.env.PORT || 3000;
+
+app.listen(port, () => {
   console.log("listening on 3000");
 });
